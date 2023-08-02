@@ -1,0 +1,327 @@
+TRUTH TABLE:
+Inputs Outputs
+a x
+0 1
+1 0
+
+Verilog code 
+module inv (a,b);
+input a;
+output b;
+assign b = ~a;
+endmodule
+
+Test bench
+module inv_tb;
+reg a;
+wire b;
+initial
+begin
+ #10 a = 1'b0;
+ #10 a = 1'b1;
+ #10 a = 1'b0;
+end
+inv inv_t(a,b,);
+endmodule
+
+
+
+Inputs Outputs
+a x
+0 0
+1 1
+
+Verilog code
+module buff (a,b);
+input a;
+output b;
+assign b = a;
+endmodule
+
+ Test bench
+module buff_tb;
+reg a;
+wire b;
+initial
+begin
+a = 1'b0;
+#10 a = 1'b1;
+#10 a = 1'b0;
+end
+buff buff_t(a,b);
+endmodule
+
+
+
+Inputs Outputs
+a b C(0)
+AND
+C(1)
+OR
+C(2)
+XOR
+C(3)
+NOT a
+C(4)
+NAND
+C(5)
+NOR
+C(6)
+XNOR
+0 0 0 0 0 1 1 1 1
+0 1 0 1 1 1 1 0 0
+1 0 0 1 1 0 1 0 0
+1 1 1 1 0 0 0 0 1
+
+Verilog code and 
+module andgate (c,a,b);
+input a,b;
+output c;
+assign c = a & b;
+endmodule
+
+Test bench
+module and_t;
+reg a,b;
+wire c;
+andgate and_test(c,a,b);
+initial
+begin
+#10
+a = 1'b0;b = 1'b0;
+#10
+a = 1'b0;b = 1'b1;
+#10
+a = 1'b1;b = 1'b0;
+#10
+a= 1'b1;b = 1'b1;
+end
+endmodule
+Verilog code nand 
+module nandgate (c,a,b);
+input a,b;
+output c;
+reg d;
+always @ (a or b)
+begin
+d <= ~(a & b);
+end
+assign c =d;
+endmodule
+
+Test bench
+module nand_t;
+reg a,b;
+wire c;
+nandgate nand_test(c,a,b);
+initial
+begin
+#10
+a = 1'b0;b = 1'b0;
+#10
+a = 1'b0;b = 1'b1;
+#10
+a = 1'b1;b = 1'b0;
+#10
+a= 1'b1;b = 1'b1;
+end
+endmodule 
+
+Verilog code nor 
+module norgate (c,a,b);
+input a,b;
+output c;
+reg d;
+always @ (a or b)
+begin
+d <= ~(a | b);
+end
+assign c = d;
+endmodule
+
+Test bench
+module nor_t;
+reg a,b;
+wire c;
+norgate nor_test(c,a,b);
+initial
+begin
+#10
+a = 1'b0;b = 1'b0;
+#10
+a = 1'b0;b = 1'b1;
+#10
+a = 1'b1;b = 1'b0;
+#10
+a= 1'b1;b = 1'b1;
+end
+endmodule
+
+
+Verilog code or 
+module orgate (c,a,b);
+input a,b;
+output c;
+assign c = a | b;
+endmodule
+
+Test bench
+module or_t;
+reg a,b;
+wire c;
+orgate or_test(c,a,b);
+initial
+begin
+#10
+a = 1'b0;b = 1'b0;
+#10
+a = 1'b0;b = 1'b1;
+#10
+a = 1'b1;b = 1'b0;
+#10
+a= 1'b1;b = 1'b1;
+end
+endmodule
+
+Verilog code or 
+module xor (c,a,b);
+input a,b;
+output c;
+always @ (a or b)
+begin
+c < = a ^ b;
+end
+endmodule
+
+Test bench
+module xor_t;
+reg a,b;
+wire c;
+and xor_test(c,a,b);
+initial
+begin
+#10
+a = 1'b0;b = 1'b0;
+#10
+a = 1'b0;b = 1'b1;
+#10
+a = 1'b1;b = 1'b0;
+#10
+a= 1'b1;b = 1'b1;
+end
+endmodule
+
+Verilog code 
+module jkflop(j,k,clk,rst,q);
+input j,k,clk,rst;
+output q;
+reg q;
+always @(posedge clk)begin
+ if(j==1 & k==1 & rst==0)begin
+ q <= #2 ~q;
+ end
+ else if(j==1 & k==0 & rst==0)begin
+ q <= #2 1;
+ end
+ else if(j==0 & k==1)begin
+ q <= #2 0;
+ end
+end
+always @(posedge rst)begin
+ q <= 0;
+end
+endmodule
+
+Test bench
+module main;
+reg j,k,clk,rst;
+wire q;
+jkflop jk(j,k,clk,rst,q);
+initial begin
+ forever begin
+ clk=0;
+ #5
+ clk=1;
+ #5
+ clk=0;
+ end
+end
+initial begin
+ j=0; k=0; rst=1;
+ #4
+ j=1; k=1; rst=0;
+ #40
+ rst=1;
+ #10
+ j=0; k=1;
+ #10
+ rst=0;
+ #10
+ j=1; k=0;
+end
+endmodule
+
+Verilog code 
+module ms_jkff(q,q_bar,clk,j,k);
+output q,q_bar;
+input clk,j,k;
+reg tq,q,q_bar;
+always @(clk)
+begin
+if (!clk)
+begin
+if (j==1'b0 &&
+k==1'b1)
+tq <= 1'b0;
+else if (j==1'b1 &&
+k==1'b0)
+tq <= 1'b1;
+else if (j==1'b1 &&
+k==1'b1)
+tq <= ~tq;
+end
+if (clk)
+begin
+q <= tq;
+q_bar <= ~tq;
+end
+end
+endmodule tq = 1’b0;
+ else if (j = = 1’b1 && k = = 1’b0)
+ tq = 1’b1;
+else if (j = = 1’b1 && k = = 1’b1)
+ tq = ~tq;
+ end
+ if (clk)
+begin
+ q = tq;
+ qb = ~tq;
+ end
+end
+endmodule
+
+Test bench
+module tb_ms_jkff;
+reg clk,j,k;
+ wire q,q_bar;
+wire clk2,j2,k2;
+ ms_jkff inst(q,q_bar,clk,j,k);
+ assign clk2=clk;
+assign j2=j;
+assign k2=k;
+initial
+ clk = 1'b0;
+ always #10
+ clk = ~clk;
+ initial
+ begin
+ j = 1'b0; k = 1'b0;
+ #60 j = 1'b0; k = 1'b1;
+ #40 j = 1'b1; k = 1'b0;
+ #20 j = 1'b1; k = 1'b1;
+ #40 j = 1'b1; k = 1'b0;
+ #5 j = 1'b0; #20 j =
+1'b1;
+ #10 ;
+ end
+endmodule
