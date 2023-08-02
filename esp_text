@@ -1,0 +1,1031 @@
+PROGRAM 1A
+Write an Assembly language program to calculate 10+9+8+.........+1
+  Page 13
+;;; Assembler Directives
+PRESERVE8 ;The PRESERVE8 directive specifies that the current file
+preserves eight-byte alignment of the stack.
+THUMB
+; Vector Table Mapped to Address 0 at Reset
+; Linker requires __Vectors to be exported
+AREA RESET, DATA, READONLY
+EXPORT __Vectors
+__Vectors
+DCD 0x20001000 ; stack pointer value when stack is empty
+DCD Reset_Handler ; reset vector
+ALIGN
+; The program
+; Linker requires Reset_Handler
+AREA MYCODE, CODE, READONLY
+ENTRY
+EXPORT Reset_Handler
+Reset_Handler
+;;;;;;;;;;User Code Starts from the next line;;;;;;;;;;;;
+MOV R1, #0x0A ;R1 -> 10
+MOV R2, #0X00 ;R2 -> 0
+LOOP1 ADD R2, R1 ;R2 -> R2 + R1
+SUBS R1, #0X01 ;R1 -> R1 - 1
+BNE LOOP1
+HERE B HERE ;Stop here
+END ;End of the program
+  
+  Page 14
+Before Execution: After Execution:
+Expected Output:
+Challenge for you:
+Try writing an Assembly language program to calculate
+1+2+3+.........+10
+Results & Observations:
+  
+PROGRAM 1B
+Write a Assembly language program to link Multiple object files and link
+them together.
+  Page 15
+;test1.s contains the main program as experiment1
+;test2.s contains the addition subroutine
+;test3.s contains the subtraction subroutine
+;test1.s
+;;; Directives
+PRESERVE8
+THUMB
+; Vector Table Mapped to Address 0 at Reset
+; Linker requires __Vectors to be exported
+AREA RESET, DATA, READONLY
+EXPORT __Vectors
+__Vectors
+DCD 0x20001000 ; stack pointer value when stack is empty
+DCD Reset_Handler ; reset vector
+ALIGN
+AREA MYCODE, CODE, READONLY
+IMPORT add_handler ;import the add and sub handlers
+IMPORT sub_handler
+ENTRY
+EXPORT Reset_Handler
+Reset_Handler
+;;;;;;;;;;User Code Starts from the next line;;;;;;;;;;;;
+MOV R1, #10 ;R1 -> 10
+MOV R2, #0 ;R2 -> 0
+LOOP1 BL add_handler
+BL sub_handler
+BNE LOOP1
+HERE B HERE
+END ;End of the program
+  
+  Page 16
+;test2.s
+AREA subroutine1, CODE, READONLY
+EXPORT add_handler
+add_handler
+__add ADD R2, R1
+BX lr ;Branch indirect - Link Register (which contains the return address)
+END
+;test3.s
+AREA subroutine2, CODE, READONLY
+EXPORT sub_handler
+sub_handler
+__sub SUBS R1, #1
+BX lr ;Branch indirect-Link Register (which contains the return address)
+END
+Expected Output:
+Before Execution:
+  
+  Page 17
+Challenge for you:
+Try writing an Assembly language program to calculate
+1
+2 + 22 +3 2 +……..+ 102
+Results & Observations:
+After Execution:
+NOTE:
+Observe that the Link Register
+(LR) contents changes twice
+during RUN time, once when
+branching to add_handler as
+0x00000015 and again when
+branching to sub_handler as
+0x00000019
+  
+PROGRAM 2
+Write an Assembly language program to store data in RAM.
+  Page 18
+;;; Directives
+PRESERVE8
+THUMB
+; Vector Table Mapped to Address 0 at Reset
+; Linker requires __Vectors to be exported
+AREA RESET, DATA, READONLY
+EXPORT __Vectors
+__Vectors
+DCD 0x20001000 ; stack pointer value when stack is empty
+DCD Reset_Handler ; reset vector
+ALIGN
+; The program
+; Linker requires Reset_Handler
+AREA MYCODE, CODE, READONLY
+ENTRY
+EXPORT Reset_Handler
+Reset_Handler
+;;;;;;;;;;User Code Starts from the next line;;;;;;;;;;;;
+MOV R1, #0x10000000 ;address -> 0x10000000
+MOV R0, #0x501 ;value -> 0x00000501
+STR R0, [R1]
+ADD R1, R1, #4 ;address -> 0x10000004
+MOV R0, R0, LSL #1 ;value -> 0x00000A02
+STR R0, [R1]
+ADD R1, R1, #4 ;address -> 0x10000008
+MOV R0, R0, LSL #1 ;value -> 0x00001404
+STR R0, [R1]
+  
+  Page 19
+ADD R1, R1, #4 ;address -> 0x1000000C
+MOV R0, R0, LSL #1 ;value -> 0x00002808
+STR R0, [R1]
+here B here
+END
+;End of the program
+Before Execution:
+Expected Output:
+After Execution:
+Challenge for you:
+Try writing an Assembly Program for Loading back the
+data in memory into Registers (R2, R3, R4 & R5)
+Results & Observations:
+  
+PROGRAM 3
+Write an Assembly language program to find Squares of First 5 natural
+numbers and store data(Squares) in RAM.
+  Page 20
+;;; Directives
+PRESERVE8
+THUMB
+; Vector Table Mapped to Address 0 at Reset
+; Linker requires __Vectors to be exported
+AREA RESET, DATA, READONLY
+EXPORT __Vectors
+__Vectors
+DCD 0x20001000 ; stack pointer value when stack is empty
+DCD Reset_Handler ; reset vector
+ALIGN
+; The program
+; Linker requires Reset_Handler
+AREA MYCODE, CODE, READONLY
+ENTRY
+EXPORT Reset_Handler
+Reset_Handler
+;;;;;;;;;;User Code Starts from the next line;;;;;;;;;;;;
+MOV R0, #0X00 ;R2 -> 0
+MOV R1, #0x05 ;R1 -> 05
+MOV R2, #0X01 ;R2 -> 01
+MOV R3, #0x10000000
+LOOP1 MUL R0, R2, R2 ;R0 -> (R2 * R2)
+STR R0,[R3]
+ADD R2, R2, #1
+ADD R3, R3, #4
+SUBS R1, #0X01 ;R1 -> R1 - 1
+BNE LOOP1
+HERE B HERE ;Stop here
+END ;End of the program
+  
+  Page 21
+Before Execution:
+After Execution:
+Expected Output:
+Challenge for you:
+Try writing an Assembly language program to find Cubes
+of First 5 natural numbers and store data(Cubes) in RAM.
+Results & Observations:
+  
+  Page 22
+PROGRAM 4
+Write an Assembly language program to find 2’s Complement of a given
+number and store data(2’s Complement) in RAM.
+;;; Directives
+PRESERVE8
+THUMB
+; Vector Table Mapped to Address 0 at Reset
+; Linker requires __Vectors to be exported
+AREA RESET, DATA, READONLY
+EXPORT __Vectors
+__Vectors
+DCD 0x20001000 ; stack pointer value when stack is empty
+DCD Reset_Handler ; reset vector
+ALIGN
+; The program
+; Linker requires Reset_Handler
+AREA MYCODE, CODE, READONLY
+ENTRY
+EXPORT Reset_Handler
+Reset_Handler
+;;;;;;;;;;User Code Starts from the next line;;;;;;;;;;;;
+MOV R0, #0x10000000 ;R0-> 0x10000000
+MOV R1, #0x055 R1-> 0x10000055
+EOR R1, #0xFFFFFFFF
+ADD R1, R1, #1
+STR R1, [R0] 1
+HERE B HERE ;Stop here
+END ;End of the program
+  
+  Page 23
+Before Execution:
+After Execution:
+Expected Output:
+Challenge for you:
+Try writing an Assembly language program to find 2’s
+Complement of a given number by using Shift operation
+and store data(2’s Complement) in RAM.
+Results & Observations:
+  
+  Page 24
+PROGRAM 5
+Write an Assembly language program to solve the given Polynomial
+Function
+Let the given Function be: 5x^2-6x+8 when x=7
+;;; Directives
+PRESERVE8
+THUMB
+; Vector Table Mapped to Address 0 at Reset
+; Linker requires __Vectors to be exported
+AREA RESET, DATA, READONLY
+EXPORT __Vectors
+__Vectors
+DCD 0x20001000 ; stack pointer value when stack is empty
+DCD Reset_Handler ; reset vector
+ALIGN
+; The program
+; Linker requires Reset_Handler
+AREA MYCODE, CODE, READONLY
+ENTRY
+EXPORT Reset_Handler
+Reset_Handler
+;;;;;;;;;;User Code Starts from the next line;;;;;;;;;;;;
+MOV R0, #7 R0-> x=7
+MUL R1, R0,R0 R1->x^2
+MOV R4, #5
+MUL R1, R1,R4
+MOV R5, #6
+MUL R2, R0,R5
+SUB R3, R1,R2
+ADD R3,R3,#8
+HERE B HERE ;Stop here
+END ;End of the program
+  
+  Page 25
+Before Execution: After Execution:
+Expected Output:
+Challenge for you:
+Try writing an Assembly language program to solve
+Functions with different values of x, different operations
+and x^3/^4 powers.
+Results & Observations:
+  
+PART-B
+INTERFACING/C
+PROGRAMS
+  Page 26
+PROGRAM 1
+Write a C-Program to display “Hello world” by using UART Serial
+Communication Protocol
+Register Description
+RBR Contains recently received Data
+THR Contains Data to be Transmitted
+FCR FIFO Contol Register
+LCR Controls UART frame from atting(No. of Data
+Bits, Stop Bits)
+DLL LSB of the UART Baud Rate Generator value.
+DLM MSB of the UART Baud Rate Generator value.
+To obtain Baud rate 9600:
+PCLK= 24MHZ
+DLM=0
+DLL=156 (in decimal) or 9C (in Hexa decimal)
+Baud rate calculation:
+Steps for Configuring UART0:
+Step1: Configure the GPIO pin for UART0 function using PINSEL register.
+Step2: Configure the FCR for enabling the FIXO and Reset both the Rx/Tx
+FIFO.
+Step3: Configure LCR for 8-data bits, 1 Stop bit, Disable Parity and Enable
+DLAB.
+Step4: Get the PCLK from PCLKSELx register 7-6 bits.
+Step5: Calculate the DLM,DLL values for required baudrate from PCLK.
+Step6: Update the DLM,DLL with the calculated values.
+Step7: Finally clear DLAB to disable the access to DLM,DLL. After this the
+UART will be ready to Transmit/Receive Data at the specified baudrate
+  
+  Page 27
+Program:
+#include "LPC17xx.h"
+#define FOSC 12000000 /* oscillator frequency */
+#define FCCLK (FOSC * 8) /* master clock frequency <= 100Mhz */
+#define FCCO (FCCLK * 3) /* PLL frequency (275Mhz to 550Mhz) */
+#define FPCLK (FCCLK / 4) /* peripheral clock frequency */
+#define UART0_BPS 9600 /* Serial communication baud rate 9600 */
+void UART0_Init (void)
+{
+unsigned int usFdiv;
+LPC_PINCON->PINSEL0 |= (1 << 4); /* Pin P0.2 used as TXD0 (Com0) */
+LPC_PINCON->PINSEL0 |= (1 << 6); /* Pin P0.3 used as RXD0 (Com0) */
+LPC_UART0->LCR = 0x83; /* allows you to set the baud rate */
+usFdiv = (FPCLK / 16) / UART0_BPS; /* set the baud rate*/
+LPC_UART0->DLM = usFdiv / 256;
+LPC_UART0->DLL = usFdiv % 256;
+LPC_UART0->LCR = 0x03; /* Lock the baud rate*/
+LPC_UART0->FCR = 0x06;
+}
+int UART0_SendByte (int ucData)
+{
+while (!(LPC_UART0->LSR & 0x20));
+return (LPC_UART0->THR = ucData);
+}
+void UART0_SendString (unsigned char *s)
+{
+while (*s != 0)
+UART0_SendByte(*s++);
+}
+int main(void)
+{
+UART0_Init();
+UART0_SendString("HELLO WORLD !!!");
+UART0_SendByte(0x0D); UART0_SendByte(0x0A); //CR LF
+}
+  
+  Page 28
+Challenge for you:
+Try Displaying more than 1 Line Message & more characters.
+Results & Observations:
+Expected Output:
+@ Serial Window
+UART#1:
+@ Hyper Terminal
+Window:
+  
+  Page 29
+PROGRAM 2
+Write a C-Program to interface 8 LEDs with LPC1768 to BLINK in given
+Pattern
+Interfacing Diagram:
+Interfacing Details:
+LPC 1768
+This board provides eight individual COMMON CATHODE SMD LED’s
+connected to LPC-1768 device through 74HC151driver IC. D1 to D8 are
+connected to general purpose I/O pins on LPC-1768 device as shown in table.
+When LPC-1768 device drives Logic “1‟ the corresponding LED turns on.
+  
+  Page 30
+Program:
+#include <lpc17xx.h>
+void delay()
+{
+int i,j;
+for(i=0;i<0x4000;i++)
+for(j=0;j<0x400;j++);
+}
+int main (void)
+{
+LPC_GPIO0->FIODIR = 0x0000FF0; /* P2.xx defined as Outputs */
+LPC_GPIO0->FIOCLR = 0x0000FF0; /* turn off all the LEDs */
+while(1)
+{
+LPC_GPIO0->FIOSET = 0x0000FF0;
+delay();
+LPC_GPIO0->FIOCLR = 0x0000FF0;
+delay();
+}
+}
+Expected Output:
+All 8 LEDs ON State:
+  
+  Page 31
+Challenge for you:
+Try writing a program to blink LEDs with different
+Patterns (like alternate LEDs glowing, 1 after the other,
+binary series etc.) and different delays.
+Results & Observations:
+All 8 LEDs OFF State:
+  
+  Page 32
+PROGRAM 3
+Write an C-Program to interface Relay with LPC1768
+Interfacing Diagram:
+Interfacing Details:
+A relay is an electrically operated switch. Many relays use an electromagnet
+to operate a switching mechanism mechanically, but other operating principles
+are also used. Relays are used where it is necessary to control a circuit by a
+low-power signal (with complete electrical isolation between control and
+controlled circuits), or where several circuits must be controlled by one signal.
+The first relays were used in long distance telegraph circuits, repeating the
+signal coming in from one circuit and re-transmitting it to another. Relays
+were used extensively in telephone exchanges and early computers to perform
+logical operations.
+K1 is an electromagnetic relay which is connected to P0.25 through Dip
+switch. We need to send logic “1‟ to switch on relay.J9 is three pin PBT
+terminal used to connect external device to relay. Table shows connections
+for Relay.
+LPC 1768
+  
+  Page 33
+PROGRAM:
+#include "lpc17xx.h“
+void delay()
+{
+int i,j;
+for(i=0;i<0x2000;i++)
+for(j=0;j<0x200;j++);
+}
+int main (void)
+{
+LPC_PINCON->PINSEL7 = 0X02000000;
+LPC_GPIO0->FIODIR = 0X02000000;
+LPC_GPIO0->FIOCLR =0X02000000;
+while(1)
+{
+LPC_GPIO0->FIOSET =0X02000000;
+delay();
+LPC_GPIO0->FIOCLR = 0X02000000;
+delay();
+}
+}
+Expected Output:
+Relay ON/CLOSED State:
+  
+Challenge for you:
+Try writing a program to interface BUZZER with the
+LPC1768 to generate audio output.
+Results & Observations:
+Relay OFF/OPEN State:
+  Page 34
+Buzzer
+Buzzer 27 P3.25
+  
+  Page 35
+PROGRAM 4
+Write a C Program to control direction of DC motor rotation using LPC
+1768.
+Interfacing Diagram:
+Interfacing Details:
+DC Motor Pin Configuration DC (direct current) motor rotates continuously. It has two
+terminals positive and negative. Connecting DC power supply to these terminals rotates
+motor in one direction and reversing the polarity of the power supply reverses the direction
+of rotation. The speed of Dc motor can maintained at a constant speed for a given load by
+using “Pulse Width Modulation (PWM)” technique. By changing the width of the pulse of
+applied to dc motor, the power applied is varied thereby DC motor speed can be increased
+or decreased. Wider the pulse Faster is the Speed, Narrower is the Pulse, and Slower is the
+Speed U9 is L293 driver IC used to drive the dc motor. It has enable lines which is used to
+switch on the DC motor. It is connected to P4.28. Logic “1‟ enables the driver and logic
+“0‟ disables the driver.P4.28 and P4.29 are used for Motor 1 direction and speed control.
+LPC 1768
+  
+  Page 36
+PROGRAM:
+#include <LPC17xx.H>
+int main (void)
+{
+LPC_GPIO4->FIODIR = 0x30000000 ;
+LPC_GPIO1->FIODIR&=~(0x0001C000);
+LPC_GPIO2->FIOSET =(1<<8);
+while(1)
+{
+if (!(LPC_GPIO1->FIOPIN & (1<<14))) //START key pressed
+LPC_GPIO4->FIOPIN=0X10000000; // Motor CCW
+if (!(LPC_GPIO1->FIOPIN &(1<<15))) //STOP key pressed
+LPC_GPIO4->FIOPIN=0X30000000; // switch OFF Motor
+if (!( LPC_GPIO1->FIOPIN & (1<<16))) //CW key pressed
+LPC_GPIO4->FIOPIN=0X20000000;
+}
+}
+Expected Output:
+CLOCKWISE Rotation:
+If the SWITCH 1 is Pressed MOTOR rotates in CLOCKWISE
+Direction.
+@ P4.28
+  
+  Page 37
+Results & Observations:
+COUNTER- CLOCKWISE Rotation:
+➢If the SWITCH 2 is Pressed MOTOR STOPs.
+➢If the SWITCH 3 is Pressed MOTOR rotates in COUNTERCLOCKWISE Direction.
+@ P4.28
+  
+  Page 38
+PROGRAM 5
+Write a C Program to control direction of Stepper motor rotation using
+LPC 1768.
+Interfacing Diagram:
+Interfacing Details:
+Stepper Motor Configuration:
+A stepper motor is a special type of electric motor that moves in increments, or steps,
+rather than turning smoothly as a conventional motor does. Typical increments are 0.9 or
+1.8 degrees, with 400 or 200 increments thus representing a full circle. The speed of the
+motor is determined by the time delay between each incremental movement.
+U8 is a Driver Buffer (ULN2003) device connected to LPC-1768 Device and can be
+used for driving Stepper Motor. On the LPC-1768, P1.22 to P1.25 is used to generate the
+pulse sequence required to run the stepper Motor. Also, the Stepper Motor is powered by
+its own power supply pin (COM), which is connected to a 12V supply. Table shows
+connections for stepper Motor.
+LPC 1768
+  
+  Page 39
+PROGRAM:
+#include <LPC17xx.H>
+void delay(unsigned int count)
+{
+unsigned int j=0,i=0;
+for(j=0;j<count;j++)
+for(i=0;i<5000;i++);
+}
+int main (void)
+{
+unsigned int del=50;
+LPC_GPIO1->FIODIR = 0x03C00000;
+uint32_t i;
+while(1)
+{
+if (!(LPC_GPIO1->FIOPIN & (1<<14)))
+{
+for ( i=0; i<500; i++)
+{
+LPC_GPIO1->FIOPIN =0x02000000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x01000000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x00800000;
+delay(del);
+  
+  Page 40
+LPC_GPIO1->FIOPIN =0x00400000;
+delay(del);
+if (!(LPC_GPIO1->FIOPIN & (1<<15)))
+break;
+}}
+if (!(LPC_GPIO1->FIOPIN & (1<<15)))
+{
+for ( i=0; i<500; i++)
+{
+LPC_GPIO1->FIOPIN =0x00400000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x00800000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x01000000;
+delay(del);
+LPC_GPIO1->FIOPIN =0x02000000;
+delay(del);
+if (!(LPC_GPIO1->FIOPIN & (1<<14)))
+break;
+}}
+}
+}
+Expected Output:
+If SWITCH 1 is Pressed MOTOR rotates in CLOCKWISE Direction:
+@ P1.25
+  
+  Page 41
+Results & Observations:
+Challenge for you:
+Try writing a program to interface both DC MOTOR and
+STEPPER MOTOR and Control their direction of
+rotation with different SWITCHS.
+@ P1.22
+@ P1.23
+@ P1.24
+If SWITCH 2 is Pressed MOTOR rotates in COUNTER CLOCKWISE
+Direction and output is seen at P1.22, P1.23, P1.24, & P1.25 respectively.
+  
+  Page 42
+PROGRAM 6
+Write a C program to read on-chip ADC value and display it on LCD
+using LPC 1768.
+Interfacing Diagram:
+Interfacing Details:
+LPC 1768
+Features of ADC:
+• 12-bit successive approximation analog to digital converter.
+• Input multiplexing among 8 pins.
+• Power-down mode.
+• Measurement range VREFN to VREFP (typically 3 V; not to exceed VDDA
+voltage level).
+• 12-bit conversion rate of 200 kHz.
+• Burst conversion mode for single or multiple inputs.
+• Optional conversion on transition on input pin or Timer Match signal. Basic
+clocking for the A/D converters is provided by the APB clock. A
+programmable divider is included in each converter to scale this clock to the
+clock (maximum 13 MHz) needed by the successive approximation process. A
+non-burst mode conversion requires 65 clocks and a burst mode conversion
+requires 64 clocks.
+This board comes with two ADC inputs. One is connected to a potentiometer for
+external analog voltage and another is for temperature measurement. A 5K
+variable POT is connected to AD0(P0.23) input of LPC1768. By varying this
+we are applying 0 to 3.3V to ADC0 input. This analog voltage input can be
+converted into digital output. An LM35 temperature sensor is connected through
+ADC SSP IC to SSEL input of LPC1768 for ambient temperature measurement.
+  
+  Page 43
+#include <LPC17xx.H>
+#include <stdio.h>
+#include "lcd.h“
+#define ADC_DONE 0x80000000
+#define ADC_OVERRUN 0x40000000
+#define ADC_CLK 1000000 /* set to 1Mhz */
+volatile uint32_t ADCValue;
+void ADCInit( uint32_t Clk )
+{
+uint32_t pclk;
+LPC_SC->PCONP |= (1 << 12);
+LPC_PINCON->PINSEL1 &= ~0x0000C000;
+LPC_PINCON->PINSEL1 |= 0x00004000;
+LPC_PINCON->PINMODE1 &= ~0x0000C000;
+LPC_PINCON->PINMODE1 |= 0x00008000;
+pclk = SystemCoreClock/4;
+LPC_ADC->ADCR = ( 0x01 << 0 ) |
+( ( pclk / Clk - 1 ) << 8 ) |
+( 0 << 16 ) |
+( 0 << 17 ) |
+( 1 << 21 ) |
+( 0 << 24 ) |
+( 0 << 27 );
+return;
+}
+uint32_t ADCRead( )
+{
+uint32_t regVal, ADC_Data;
+LPC_ADC->ADCR &= 0xFFFFFF00;
+LPC_ADC->ADCR |= (1 << 24) | 1;
+while ( 1 )
+{
+PROGRAM:
+  
+  Page 44
+regVal = LPC_ADC->ADDR0;
+if ( regVal & ADC_DONE ) break;
+}
+LPC_ADC->ADCR &= 0xF8FFFFFF; /* stop ADC now */
+if ( regVal & ADC_OVERRUN )
+return ( 0 );
+ADC_Data = ( regVal >> 4 ) & 0xFFF;
+return ( ADC_Data );
+}
+int main (void)
+{
+char lstr[10];
+double volt;
+ADCInit( ADC_CLK );
+init_lcd();
+lcd_putstring16(0,"RAW ADC = 0000 ");
+lcd_putstring16(1,"VOLTAGE = 0.00v ");
+while(1)
+{
+ADCValue = ADCRead();
+sprintf (lstr, "%4u", ADCValue);
+lcd_gotoxy(0,10);
+lcd_putstring(lstr);
+volt = (double)ADCValue * 0.0008056640625;
+sprintf (lstr, "%0.2f", volt);
+lcd_gotoxy(1,10);
+lcd_putstring(lstr);
+delay(500);
+}
+}
+  
+  Page 45
+Results & Observations:
+NOTE:
+Along with the above program add lcd.c and lcd.h Supporting files and then build the
+program.
+Expected Output:
+  
+  Page 46
+PROGRAM 7
+Write a C program to Interface a DAC and generate Triangular and
+Square waveforms using LPC 1768..
+Interfacing Diagram:
+Interfacing Details:
+Features of Digital to Analog Converter[DAC]:
+• 10-bit digital to analog converter
+• Resistor string architecture
+• Buffered output
+• Selectable speed vs. power
+• Maximum update rate of 1 MHZ.
+As this board comes with one DAC output for generation different wave
+forms. AOUT (P0.26) is connected to TEST point TP1. The generated
+waveforms can be viewed through TP1 (DAC) and TP2 (GND) by
+connecting CRO.
+LPC 1768
+  
+  Page 47
+a. Program for Square Wave generation:
+#include <LPC17xx.H>
+#define voltage 1024
+#define freq 120000
+int main (void)
+{
+uint32_t m;
+LPC_PINCON->PINSEL1 |= (1<<21);
+while(1)
+{
+LPC_DAC->DACR = (voltage/2 << 6);
+for(m = freq; m > 1; m--);
+LPC_DAC->DACR = (voltage << 6);
+for(m = freq; m > 1; m--);
+}
+}
+b. Program for Triangle wave generation:
+#include <LPC17xx.H>
+#define voltage 1024
+int main (void)
+{
+uint32_t i = 0;
+LPC_PINCON->PINSEL1 |= (1<<21);
+while(1)
+{
+for(i = 0; i < voltage; i++)
+LPC_DAC->DACR = (i << 6);
+for(i = voltage; i > 0; i--)
+LPC_DAC->DACR = (i << 6);
+}
+}
+  
+  Page 48
+Expected Output:
+Square Wave output:
+Triangular Wave output:
+  
+  Page 49
+Results & Observations:
+Challenge for you:
+Try writing a program to generate both Square &
+Triangular Wave using a single program and selection
+made through a SWITCH.
+  
+  Page 50
+PROGRAM 8
+Write a C program to Interface Real Time Clock and display the current
+time using LPC 1768.
+#include "LPC1768_Includes.h"
+#include "UART.h"
+#include <stdio.h>
+void RTC_init(void)
+{
+CIIR = 0x00; // no interrupt
+CCR = 0x11;
+}
+void RTC_SetTime(int hours, int mins, int sec)
+{
+SEC = sec; // program the secs
+MIN = mins; // program the mins
+HOUR = hours; // program the hours
+CCR = 0x11; // start the clock
+}
+void RTC_GetTime(int *hour, int *min, int *sec)
+{
+*sec = SEC;
+*min = MIN;
+*hour = HOUR;
+}
+void delay(unsigned int time)
+{
+unsigned int i,j;
+for(i=0;i<time;i++)
+for(j=0;j<10000;j++);
+}
+Using inbuilt Real Time Clock (RTC) we will be writing a program to
+Display current TIME in Hrs : Mins : Secs
+  
+  Page 51
+int main()
+{
+int hours, min, sec;
+UartInit(9600);
+RTC_init();
+RTC_SetTime(0x03, 0x10, 0x01);
+printf("RTC Program\r\n");
+while(1)
+{
+RTC_GetTime(&hours, &min, &sec);
+printf("Time: %02x:%02x:%02x\r\n",hours, min, sec);
+delay(600);
+}
+}
+NOTE:
+Along with this Program add LPC1768_Includes.h, UART.c and UART.h
+supporting files and then BUILD the Program.
+Expected Output:
+  
+  Page 52
+Results & Observations:
+Challenge for you:
+Try writing a program to display Day of the
+Month(DOM), Day of the Week(DOW), Day of the
+Year(DOY), Month and Year.
+  
+  Page 53
+PROGRAM 9
+Write a C program to demonstrate the use of an external
+interrupt in LPC 1768
+EINT0
+EINT1
+*ISR-Interrupt Service Routine
+Main
+Program
+Main
+Program
+ISR
+LPC1768
+Register Description
+PINSELx To configure pins as External interrupts
+EXTINT External Interrupt Flag Register contains flags for EINT0,
+EINT1, EINT2 & EINT3
+EXTMODE External Interrupt Mode Register (Level/Edge triggered)
+EXTPOLAR External Interrupt Polarity(Falling/Rising, Active High/Low)
+Configurations Steps for External Interrupt:
+1. Configure the pins as external interrupts in PINSELx register.
+2. Clear any pending interrupts in EXTINT.
+3. Configure the EINTx as Edge/Level triggered in EXTMODE register.
+4. Select the polarity(Falling/Rising Edge, Active Low/High) of the interrupt in
+EXTPOLAR register.
+5. Finally enable the interrupts by calling NVIC_EnableIRQ() with IRQ
+number
+  
+  Page 54
+Program to demonstrate the External interrupt:
+When an interrupt occurs INT0, main program (7 Segment Display Execution) halts
+and wait till a key to be pressed (key P1.14). As soon as key pressed, it resumes the
+main operation
+7- SEGMENT Selection Pin Configurations:
+This board comes with 4 digit seven segment unit. Displays connected to the
+microcontroller usually occupy a large number of valuable I/O pins, which can
+be a big problem especially if it is needed to display multi digit numbers. The
+problem is more than obvious if, for example, it is needed to display four digit
+numbers (a simple calculation shows that 32 output pins are needed in this
+case). The solution to this problem is called MULTIPLEXING. Only one digit
+is active at a time, but they change their state so quickly making impression
+that all digits of a number are simultaneously active. Each digit can made
+active using switching transistors Q1, Q2, Q3 and Q4 and these on switched on
+and off by selection lines which are in turn connected to LPC-1768 ports.
+7-Segment Display Pin Configuration:
+D12, D11, D10 and D9 are Common Cathode segments connected to LPC1768 device so that each segment is individually controlled by a general
+purpose I/O pin. When the LPC-1768 device drives logic “0‟ the
+corresponding segment turns on.
+7-Segment
+Data Lines
+g f a b p c d e
+LPC1768
+Port No.
+P2.0 P2.1 P2.2 P2.3 P2.4 P2.5 P2.6 P2.7
+Seven Segment Pin connection table:
+D9 D10 D11 D12
+  
+  Page 55
+#include <lpc17xx.h>
+unsigned char data7[] = {0x88,0xeb,0x4c,0x49,0x2b,0x19,0x18,0xcb,
+0x8,0x9,0xa,0x38,0x9C,0x68,0x1c,0x1e};
+void intrupt_init()
+{
+LPC_PINCON->PINSEL4 = (1<<20);
+LPC_SC->EXTINT = (1<<0) ;
+LPC_SC->EXTMODE = (1<<0) ;
+LPC_SC->EXTPOLAR = (1<<0);
+}
+void EINT0_IRQHandler(void)
+{
+if (!(LPC_GPIO1->FIOPIN & (1<<14)))
+LPC_SC->EXTINT = (1<<0);
+}
+int main()
+{
+unsigned int i,j;
+unsigned int count=0;
+intrupt_init();
+LPC_SC->EXTINT = (1<<0);
+NVIC_EnableIRQ(EINT0_IRQn);
+LPC_GPIO2->FIODIR = 0x000000FF;
+LPC_GPIO1->FIODIR = 0x3C000000;
+LPC_GPIO1->FIOSET=(1<<29);
+LPC_GPIO1->FIODIR&=~(0x00008000);
+PROGRAM:
+7-Segment selection
+Lines
+Disp1
+(D9)
+Disp1
+(D9)
+Disp1
+(D9)
+Disp1
+(D9)
+LPC-1768 Port No. P1.26 P2.27 P1.28 P1.29
+Seven Segment Selection table:
+  
+  Page 56
+Results & Observations:
+Challenge for you:
+Try writing a program to configure all FOUR 7-Segment
+Displays and count simultaneously.
+while(1)
+{
+++count;
+if (count > 0xF)
+count = 0;
+for (i=0; i < 25000; i++)
+{
+LPC_GPIO2->FIOPIN = data7[count];
+for (j=0;j<1000;j++);
+} }
+}
+  
+  Page 57
+PROGRAM 10
+Write a C program to Interface a 4x4 keyboard and display the key
+pressed on an LCD using LPC 1768.
+Interfacing Diagram:
+Interfacing Details:
+HEX KEY PAD Pin configurations:
+The hex keypad is a peripheral that is organized in rows and Columns. Hex
+key Pad 16 Keys arranged in a 4 by 4 grid, labeled with the hexadecimal digits
+0 to F. Internally, the structure of the hex keypad is very simple. Wires run in
+vertical columns (we call them C0 to C3) and in horizontal rows (called R0 to
+R3). These 8 wires are available externally, and will be connected to the lower
+8 bits of the port. Each key on the keypad is essentially a switch that connects
+a row wire to a column wire. When a key is pressed, it makes an electrical
+connection between the row and column. Table shows connections for HEX
+KEY Pad matrix.
+LPC 1768
+  
+  Page 58
+PROGRAM:
+#include <LPC17xx.H>
+#include <stdio.h>
+#include "lcd.h"
+void delay(unsigned int count)
+{
+unsigned int j=0,k=0;
+for(j=0;j<count;j++)
+{
+for(k=0;k<12000;k++);
+}
+}
+void LCD_DATA(unsigned char val)
+{
+LPC_GPIO2->FIOPIN= val;
+LPC_GPIO0->FIOSET=(1<<28);
+LPC_GPIO0->FIOSET=(1<<27);
+delay(100);
+LPC_GPIO0->FIOCLR=(1<<27);
+delay(100);
+}
+void col_write( unsigned char data )
+{
+unsigned int temp=0;
+temp=(data << 14) & 0X0003C000;
+LPC_GPIO1->FIOCLR = 0X0003C000;
+LPC_GPIO1->FIOSET = temp;
+}
+int main()
+{
+unsigned char array[100]={"PRESSED KEY IS"};
+  
+  Page 59
+unsigned char i,j,key,key1;
+unsigned char rval[ ] = {0x7,0xB,0xD,0xE,0x0};
+unsigned char keyPadMatrix[ ] = { 'C','8','4','0',
+'D','9','5','1',
+‘E','A','6','2',
+'F','B','7','3‘ };
+LPC_GPIO0->FIODIR =0X18000000;
+LPC_GPIO2->FIODIR=0x000000FF;
+LPC_GPIO1->FIODIR=0X0003C000;
+LPC_GPIO1->FIODIR&=~0X003C0000;
+init_lcd();
+for(j=0; j<14; j++)
+{
+key1=array[j];
+LCD_DATA(key1);
+delay(100);
+}
+while(1)
+{
+key = 0;
+for( i = 0; i < 4; i++ )
+{
+col_write(rval[i]);
+if (!(LPC_GPIO1->FIOPIN & (1<<18)))
+break;
+key++;
+if (!(LPC_GPIO1->FIOPIN & (1<<19)))
+break;
+key++;
+if (!(LPC_GPIO1->FIOPIN & (1<<20)))
+break;
+key++;
+  
+  Page 60
+if (!(LPC_GPIO1->FIOPIN & (1<<21)))
+break;
+key++;
+}
+lcd_command_write(0xC8);
+if (!(key == 0x10))
+LCD_DATA(keyPadMatrix[key]);
+delay(10);
+}
+}
+Results & Observations:
+NOTE:
+Along with the above program add lcd.c and lcd.h Supporting files and then
+build the program.
+  
